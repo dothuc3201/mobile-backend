@@ -9,6 +9,20 @@ const listEmployee = async (req, res) => {
     }
 }
 
+const getEmployeeInfo = async (req, res) => {
+    const {user} = req.user;
+    try {
+        const employee = await Employee.findOne({
+            where : {
+                id : user.id
+            }
+        })
+        res.status(200).send(employee);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
 const createEmployee = async (req, res) => {
     const {name, lastName, firstName, DOB, gender, cccd,
 //        front_photo, back_photo, timekeeping_photo,
@@ -57,5 +71,6 @@ module.exports = {
     listEmployee,
     createEmployee,
     updateEmployee,
-    deleteEmployee
+    deleteEmployee,
+    getEmployeeInfo
 }
