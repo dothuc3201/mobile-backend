@@ -8,9 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      date: {
-        type: Sequelize.DATE
-      },
       status: {
         type: Sequelize.STRING
       },
@@ -22,11 +19,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      employee_id :{
+      user_id :{
         type: Sequelize.INTEGER,
         references: {
           // This is a reference to another model
-          model: 'employees',
+          model: 'users',
           // This is the column name of the referenced model
           key: 'id',
           }

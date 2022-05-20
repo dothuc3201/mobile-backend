@@ -10,7 +10,7 @@ const listEmployee = async (req, res) => {
 }
 
 const getEmployeeInfo = async (req, res) => {
-    const {user} = req.user;
+    const {user} = req;
     try {
         const employee = await Employee.findOne({
             where : {

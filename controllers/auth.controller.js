@@ -22,10 +22,10 @@ const loginUser = async (req, res) => {
             }
         });
         if(loginUser){
-            const token = jwt.sign({username, role: loginUser.role}, "pikachu", {expiresIn: 60 * 60});
+            const token = jwt.sign({username, role: loginUser.role, id:loginUser.id}, "pikachu", {expiresIn: 60 * 60});
             res.status(201).send({messenger:"Đăng nhập thành công", id: loginUser.id, username: loginUser.username, role: loginUser.role , token});
         }else{
-            res.status(404).send("Tài khoản hoặc mật khẩu bạn không đúng!");
+            res.status(201).send("Tài khoản hoặc mật khẩu bạn không đúng!");
         }
     } catch (error) {
         res.status(500).send(error);
