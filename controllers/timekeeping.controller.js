@@ -4,12 +4,6 @@ const { Op } = require("sequelize");
 const timeKeeping = async (req, res) => {
     const {user} = req;
     try {
-        // const employee = await Employee.findOne({
-        //     where : {
-        //         id : user.id
-        //     }
-        // })
-        // res.status(200).send(employee);
         const dateNow = new Date();
         const dNow = new Date(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate());
         const date = await TimekeepingInfo.findOne({
@@ -22,7 +16,7 @@ const timeKeeping = async (req, res) => {
             }
         });
         if (date){
-            const d = await TimekeepingInfo.update({status:"end", updatedAt:new Date()},{
+            await TimekeepingInfo.update({status:"end", updatedAt:new Date()},{
                 where:{
                     createdAt:{
                         [Op.lt]: dateNow,
@@ -31,15 +25,23 @@ const timeKeeping = async (req, res) => {
                     user_id:user.id
                 }
             });
-            res.status(201).send({message:"thành công"});
         }else{
-            const d = await TimekeepingInfo.create({
+            await TimekeepingInfo.create({
                 user_id:user.id,
                 status:"start"
-            });            
-            res.status(201).send({message:"thành công"});
+            });                       
         }
-        
+        // const d = await TimekeepingInfo.findOne({
+        //     where:{
+        //         createdAt:{
+        //             [Op.lt]: dateNow,
+        //             [Op.gt]: dNow
+        //         },
+        //         user_id:user.id
+        //     }
+        // });
+        // console.log(d.createdAt.getDate());
+        res.status(201).send({message:"thành công"});
     } catch (error) {
         res.status(500).send(error);
     }
@@ -49,9 +51,7 @@ const getTimeKeeping = async (req, res) => {
     const {start, end} = req.body;
     try {
         // console.log(start, end);
-        console.log(user);
         if (start == undefined || end == undefined){
-            console.log(user);
             const listLichsu = await TimekeepingInfo.findAll({
                 where:{
                     createdAt:{
@@ -80,12 +80,65 @@ const getTimeKeeping = async (req, res) => {
     }
 }
 
+const thongtinchamcong = async (req, res) => {
+    const {user} = req;
+    try {
+        const dateNow = new Date();
+        const arrDate = [];
+        for (let i = 0; i < dateNow.getDate(); i++){
+            arrDate[i] = i+1;
+        };
+        const dNow = new Date(dateNow.getFullYear(), dateNow.getMonth(), 1);
+        const d = await TimekeepingInfo.findAll({
+            where:{
+                createdAt:{
+                    [Op.lt]: dateNow,
+                    [Op.gt]: dNow
+                },
+                user_id:user.id
+            }
+        });
+        const thongtinArr=d.map(day => {
+            if (day.status == "nghi") return {day:day.createdAt.getDate(), status:"nghi"}
+            else if((day.updatedAt-day.createdAt)/(60*60*1000) < 8){
+                return {day:day.createdAt.getDate(), status:"congthieu"};
+            }else{
+                return {day:day.createdAt.getDate(), status:"congdu"};
+            }
+        });
+        // console.log(dateNow);
+        // const thongtinArr = arrDate.map( async (day) =>  {
+        //     const d = await TimekeepingInfo.findOne({
+        //         where:{
+        //             createdAt:{
+        //                 [Op.lt]: new Date(dateNow.getFullYear(), dateNow.getMonth(), day, 23),
+        //                 [Op.gt]: new Date(dateNow.getFullYear(), dateNow.getMonth(), day)
+        //             },
+        //             user_id:user.id
+        //         }
+        //     });
+        //     if (d){
+        //         if((d.updatedAt-d.createdAt)/(60*60*1000) < 6){
+        //             return {day:d.createdAt.getDate(), status:"congthieu"};
+        //         }else{
+        //             return {day:d.createdAt.getDate(), status:"congdu"};
+        //         }
+        //     }else{  
+        //         return {day:day, status:"nghi"};
+        //     }
+        // });
+        res.status(201).send({message:"thành công", thongtinArr});
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
 const addDayoff = async (req, res) => {
 
 }
 
 module.exports = {
     timeKeeping,
-    getTimeKeeping
+    getTimeKeeping,
+    thongtinchamcong
 }
 
