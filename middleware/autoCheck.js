@@ -1,4 +1,4 @@
-
+const { Op } = require("sequelize");
 const {User, TimekeepingInfo} = require("../models");
 const autoCheck = async () =>{
     const user = await User.findAll();
