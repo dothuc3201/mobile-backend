@@ -1,28 +1,32 @@
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const {sequelize} = require('./models');
-const {rootRouter} = require('./routers');
-const { QueryTypes } = require('sequelize');
-const { autoCheck } = require('./middleware/autoCheck');
+const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const { sequelize } = require("./models");
+const { rootRouter } = require("./routers");
+const { QueryTypes } = require("sequelize");
+const { autoCheck } = require("./middleware/autoCheck");
 const app = express();
 const port = 3000;
 
-app.use(express.json({
-    limit: '50mb'
-  }));
-  
-app.use(express.urlencoded({
-  limit: '50mb',
-  parameterLimit: 100000,
-  extended: true 
-}));
-  
-app.use("/public", express.static(path.join(__dirname, './public')));
+app.use(
+  express.json({
+    limit: "50mb",
+  })
+);
+
+app.use(
+  express.urlencoded({
+    limit: "50mb",
+    parameterLimit: 100000,
+    extended: true,
+  })
+);
+
+app.use("/public", express.static(path.join(__dirname, "./public")));
 
 app.use(cors());
 
-app.use('/api', rootRouter);  
+app.use("/api", rootRouter);
 autoCheck();
 // app.get('/api/', (req, res) => {
 //   res.send('Hello World!')
@@ -34,8 +38,8 @@ app.listen(port, async () => {
     await sequelize.authenticate();
     console.log(`Connection has been established successfully 1`);
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
-}
+    console.error("Unable to connect to the database:", error);
+  }
 });
 
 // const connect = async () => {
