@@ -143,17 +143,19 @@ const thongtinchamcong = async (req, res) => {
 
 const getThongtinchamcongBydate = async (req, res) => {
   const {user} = req;
-  const {date} = req.body;
+  const {date, month, year} = req.body;
   try {
+    console.log(date, user);
     const lichsu = await TimekeepingInfo.findOne({
       where: {
         createdAt: {
-          [Op.lt]: new Date(date.getFullYear, date.getMonth, date.getDate, 23),
-          [Op.gt]: date,
+          [Op.lt]: new Date(year, month-1, date, 23),
+          [Op.gt]: new Date(year, month-1, date, 0),
         },
         user_id: user.id,
       },
     });
+    console.log(lichsu);
     if (lichsu.status == "nghi")
       res.status(201).send({lichsu});
       else if ((lichsu.updatedAt - lichsu.createdAt) / (60 * 60 * 1000) < 8) {
